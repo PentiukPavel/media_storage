@@ -1,6 +1,6 @@
-# FastAPI_SQLAlchemy_template
+# Media Storage
 ## Описание
-......
+Сервис по загрузке медиа файлов от пользователей
 
 ## Для разработчиков:
 ### Пример файла с переменными среды:
@@ -21,13 +21,15 @@ pre-commit run --all-files
 
 1. Клонировать проект
 ```bash
-git clone git@github.com:PentiukPavel/.....
+git clone git@github.com:PentiukPavel/media_storage.git
 ```
 
 2. Переименовать файл .env.example и изменить содержимое на актуальные данные.
 ```bash
 mv .env.example .env
 ```
+
+3. В папке certs расположены сертификаты для выпуска JWT токенов. Сертификаты приведены для примера. Не использовать в продакшен!
 
 ### 1) Запуск проекта на локальной машине:
 
@@ -82,8 +84,6 @@ uvicorn main:app --reload
 
 ## Стек
 ### FastAPI
-### pytest
 ### SQLAlchemy
 ### PosrgreSQL
-### Redis
 ### Nginx

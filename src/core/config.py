@@ -1,10 +1,26 @@
+from pathlib import Path
+
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BASE_DIR = Path(__file__).parent.parent
+
+
+class AuthJWT(BaseModel):
+    private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
+    public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
+    algorithm: str = "RS256"
+    access_token_lifetime: int = 15
+    refresh_token_lifetime: int = 15
+    token_type_field: str = "type"
+    access_token_type: str = "access"
+    refresh_token_type: str = "refresh"
 
 
 class Settings(BaseSettings):
     # App config
-    AUTH_SECRET: str
     ERROR_LOG_FILENAME: str
+    STORAGE_LOCATION: str = "media/"
 
     # Data Base config
     POSTGRES_HOST: str
@@ -13,22 +29,12 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
 
-    # e-mail config
-    SMTP_PASSWORD: str
-    SMTP_USER: str
-    SMTP_HOST: str
-    SMTP_PORT: str
+    # Yandex ID configuration
+    CLIENT_ID: str
+    CLIENT_SECRET: str
+    REDIRECT_URI: str = "https://oauth.yandex.ru/verification_code"
 
-    # Redis config
-    REDIS_HOST: str
-    REDIS_PORT: str
-
-    # Test Data Base config
-    DB_HOST_TEST: str
-    DB_PORT_TEST: str
-    DB_NAME_TEST: str
-    DB_USER_TEST: str
-    DB_PASS_TEST: str
+    AUTH_JWT: AuthJWT = AuthJWT()
 
     model_config = SettingsConfigDict(env_file="../.env")
 
@@ -40,8 +46,4 @@ DSN = (
     f"{settings.POSTGRES_PASSWORD}"
     f"@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}"
     f"/{settings.POSTGRES_NAME}"
-)
-DATABASE_URL_TEST = (
-    f"postgresql+asyncpg://{settings.DB_USER_TEST}:{settings.DB_PASS_TEST}"
-    f"@{settings.DB_HOST_TEST}:{settings.DB_PORT_TEST}/{settings.DB_NAME_TEST}"
 )

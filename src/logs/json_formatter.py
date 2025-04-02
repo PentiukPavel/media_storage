@@ -95,9 +95,9 @@ def write_file(msg):
         data = json.load(log_file)
         message = json.loads(msg)
         message_dict = {}
-        message_dict[
-            datetime.datetime.now().strftime("%y-%m-%d %H:%M:%S")
-        ] = message
+        message_dict[datetime.datetime.now().strftime("%y-%m-%d %H:%M:%S")] = (
+            message
+        )
         data.append(message_dict)
     with open(settings.ERROR_LOG_FILENAME, "w") as file:
         json.dump(data, file, indent=4)
