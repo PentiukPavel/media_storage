@@ -9,6 +9,10 @@ from schemes import Code
 
 
 class YandexAuth:
+    """
+    Класс для авторизации через yandex ID.
+    """
+
     def __init__(self):
         self.client_id = settings.CLIENT_ID
         self.client_secret = settings.CLIENT_SECRET

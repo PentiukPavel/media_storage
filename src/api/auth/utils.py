@@ -81,12 +81,12 @@ async def current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="invalid token type",
         )
-    email: str = payload.get("sub")
+    email: str = payload.get("email")
     uow = UnitOfWork()
     async with uow:
         user = await uow.users.get_user_by_email(email)
         if user:
-            return user
+            return user.to_read_model()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="token invalid (user not found)",

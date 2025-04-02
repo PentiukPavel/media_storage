@@ -21,9 +21,7 @@ def create_jwt(
 
 
 def create_access_token(user: User) -> str:
-    payload = {
-        "email": user.email,
-    }
+    payload = {"email": user.email}
     return create_jwt(
         token_type=settings.AUTH_JWT.access_token_type,
         token_data=payload,
