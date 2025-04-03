@@ -3,5 +3,6 @@ from pydantic import BaseModel
 
 class MediaFileRetrieve(BaseModel):
     id: int
-    image_url: str
+    file_url: str
     filename: str
+    owner_id: int

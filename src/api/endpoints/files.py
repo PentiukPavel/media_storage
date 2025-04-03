@@ -24,6 +24,7 @@ async def get_files_of_user_endpoint(
     "/add_file/{filename}/",
     summary="Добавление файла.",
     description="Добавление файла.",
+    response_model=MediaFileRetrieve,
 )
 async def create_media_file_endpoint(
     filename: str,

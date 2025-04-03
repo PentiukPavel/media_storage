@@ -1,6 +1,12 @@
+from pathlib import Path
+
+import shutil
+
+from fastapi import UploadFile
+
+from core.config import settings
 from models import User
 from utils.unit_of_work import BaseUnitOfWork
-from services.utils import create_file
 
 
 class MediaFilesService:
@@ -16,16 +22,23 @@ class MediaFilesService:
         self,
         filename: str,
         current_user: User,
-        file,
+        file: UploadFile,
     ):
         data = {
             "filename": filename,
             "owner_id": current_user.id,
         }
-        media_file_id = await create_file(
-            uow=self.uow,
-            file=file,
-            data=data,
+        filename = file.filename
+        ext = filename.split(".")[-1]
+        path = Path(
+            settings.STORAGE_LOCATION,
+            f"{data["owner_id"]}",
+            f"{data["filename"]}.{ext}\\",
         )
-        await self.uow.commit()
-        return media_file_id
+        data["file_url"] = str(path)
+        async with open(path, "wb+") as media_file:
+            shutil.copyfileobj(file.file, media_file)
+        async with self.uow:
+            media_file = await self.uow.media.create_media_file(data)
+            await self.uow.commit()
+        return media_file

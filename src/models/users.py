@@ -9,7 +9,6 @@ class User(CommonMixin, Base):
 
     email: Mapped[String] = Column(
         String(length=250),
-        index=True,
         unique=True,
         nullable=False,
     )

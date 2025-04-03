@@ -8,10 +8,8 @@ from schemes import MediaFileRetrieve
 
 class MedeaFile(CommonMixin, Base):
 
-    filename: Mapped[String] = Column(
-        String(length=100), index=True, nullable=False
-    )
-    image_url: Mapped[str] = Column(URLType, nullable=False)
+    filename: Mapped[String] = Column(String(length=100), nullable=False)
+    file_url: Mapped[str] = Column(URLType, nullable=False)
     owner_id: Mapped[int] = Column(
         Integer, ForeignKey("user.id"), nullable=False
     )
@@ -21,6 +19,7 @@ class MedeaFile(CommonMixin, Base):
     def to_read_model(self) -> MediaFileRetrieve:
         return MediaFileRetrieve(
             id=self.id,
-            image_url=self.image_url,
+            file_url=self.file_url,
             filename=self.filename,
+            owner_id=self.owner_id,
         )
