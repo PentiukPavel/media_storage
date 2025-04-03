@@ -3,7 +3,7 @@ from typing import Annotated, List
 from fastapi import APIRouter, File, UploadFile
 
 from api.dependencies import current_user_dep, media_service_dep
-from schemes import MediaFileCreate, MediaFileRetrieve
+from schemes import MediaFileRetrieve
 
 media_v1_router = APIRouter(prefix="/media", tags=["Media"])
 
@@ -21,18 +21,18 @@ async def get_files_of_user_endpoint(
 
 
 @media_v1_router.post(
-    "/add_file/",
+    "/add_file/{filename}/",
     summary="Добавление файла.",
     description="Добавление файла.",
 )
 async def create_media_file_endpoint(
+    filename: str,
+    file: Annotated[UploadFile, File(description="Фото к услуге")],
     media_service: media_service_dep,
     current_user: current_user_dep,
-    file: Annotated[UploadFile, File(description="Фото к услуге")],
-    media_file: MediaFileCreate,
 ):
     return await media_service.create_media_file(
-        media_file=media_file,
+        filename=filename,
         current_user=current_user,
         file=file,
     )

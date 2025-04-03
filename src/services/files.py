@@ -1,6 +1,5 @@
 from models import User
 from utils.unit_of_work import BaseUnitOfWork
-from schemes import MediaFileCreate
 from services.utils import create_file
 
 
@@ -15,12 +14,14 @@ class MediaFilesService:
 
     async def create_media_file(
         self,
-        media_file: MediaFileCreate,
+        filename: str,
         current_user: User,
         file,
     ):
-        data = media_file.model_dump()
-        data["owner_id"] = current_user.id
+        data = {
+            "filename": filename,
+            "owner_id": current_user.id,
+        }
         media_file_id = await create_file(
             uow=self.uow,
             file=file,

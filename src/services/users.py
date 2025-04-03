@@ -1,7 +1,5 @@
-from fastapi import Depends, status, HTTPException
-from fastapi.security import (
-    HTTPBearer,
-)
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer
 
 from api.auth.helpers import create_access_token, create_refresh_token
 from api.auth.yandex_auth import YandexAuth
@@ -58,7 +56,7 @@ class UserService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="invalid token type",
             )
-        email: str = payload.get("sub")
+        email: str = payload.get("email")
         async with self.uow:
             user = await self.uow.users.get_user_by_email(email)
             if user:

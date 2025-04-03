@@ -20,7 +20,7 @@ class AuthJWT(BaseModel):
 class Settings(BaseSettings):
     # App config
     ERROR_LOG_FILENAME: str
-    STORAGE_LOCATION: str = "media/"
+    STORAGE_LOCATION: Path = Path(BASE_DIR, "media")
 
     # Data Base config
     POSTGRES_HOST: str

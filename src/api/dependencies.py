@@ -1,8 +1,8 @@
-from typing import Annotated
+from typing import Annotated, Dict
 
 from fastapi import Depends
 
-from api.auth.utils import current_user
+from api.auth.utils import current_user, get_payload
 from models import User
 from services import MediaFilesService, UserService
 from utils.unit_of_work import BaseUnitOfWork, UnitOfWork
@@ -22,3 +22,4 @@ def get_media_service(uow: UOWDep) -> MediaFilesService:
 users_service_dep = Annotated[UserService, Depends(get_users_service)]
 media_service_dep = Annotated[MediaFilesService, Depends(get_media_service)]
 current_user_dep = Annotated[User, Depends(current_user)]
+payload_dep = Annotated[Dict, Depends(get_payload)]

@@ -1,10 +1,7 @@
 from pydantic import BaseModel
 
 
-class MediaFileCreate(BaseModel):
-    filename: str
-
-
-class MediaFileRetrieve(MediaFileCreate):
+class MediaFileRetrieve(BaseModel):
     id: int
     image_url: str
+    filename: str
