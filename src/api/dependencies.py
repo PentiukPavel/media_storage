@@ -2,7 +2,8 @@ from typing import Annotated, Dict
 
 from fastapi import Depends
 
-from api.auth.utils import current_user, get_payload
+from api.auth.utils import get_payload
+from api.auth.db_utils import current_user
 from models import User
 from services import MediaFilesService, UserService
 from utils.unit_of_work import BaseUnitOfWork, UnitOfWork

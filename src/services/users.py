@@ -1,15 +1,11 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer
+from fastapi import HTTPException, status
 
-from api.auth.helpers import create_access_token, create_refresh_token
+from api.auth.jwt_utils import create_access_token, create_refresh_token
 from api.auth.yandex_auth import YandexAuth
-from api.auth.utils import get_payload
 from core.config import settings
 from models import User
 from utils.unit_of_work import BaseUnitOfWork
 from schemes import Token
-
-http_bearer = HTTPBearer()
 
 
 class UserService:
@@ -46,7 +42,7 @@ class UserService:
 
     async def refresh_access_token(
         self,
-        payload: dict = Depends(get_payload),
+        payload: dict,
     ) -> str:
         if (
             payload.get(settings.AUTH_JWT.token_type_field)

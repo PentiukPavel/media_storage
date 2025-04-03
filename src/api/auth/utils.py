@@ -10,8 +10,6 @@ import jwt
 from jwt.exceptions import InvalidTokenError
 
 from core.config import settings
-from models import User
-from utils.unit_of_work import UnitOfWork
 
 
 http_bearer = HTTPBearer()
@@ -31,7 +29,7 @@ def encode_jwt(
     else:
         expire = now + timedelta(minutes=delta_minutes)
     payload_upd.update(exp=expire, iat=now)
-    encoded = jwt.encode(payload, private_key, algorithm)
+    encoded = jwt.encode(payload_upd, private_key, algorithm)
     return encoded
 
 
@@ -67,27 +65,4 @@ def get_payload(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"invalid token error: {e}",
-        )
-
-
-async def current_user(
-    payload: dict = Depends(get_payload),
-) -> User:
-    if (
-        payload.get(settings.AUTH_JWT.token_type_field)
-        != settings.AUTH_JWT.access_token_type
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="invalid token type",
-        )
-    email: str = payload.get("email")
-    uow = UnitOfWork()
-    async with uow:
-        user = await uow.users.get_user_by_email(email)
-        if user:
-            return user.to_read_model()
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="token invalid (user not found)",
         )
