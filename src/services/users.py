@@ -34,10 +34,12 @@ class UserService:
         access_token = create_access_token(user)
         refresh_token = create_refresh_token(user)
 
-        return Token(
-            access_token=access_token,
-            refresh_token=refresh_token,
-            token_type="Bearer",
+        return (
+            Token(
+                access_token=access_token,
+                token_type="Bearer",
+            ),
+            refresh_token,
         )
 
     async def refresh_access_token(

@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 
 from api.dependencies import users_service_dep, current_user_dep
-from api.auth.utils import get_access_payload
+from api.auth.utils import get_refresh_payload
+from core.config import settings
 from schemes import Code, Token, UserRetrieve
 
 users_v1_router = APIRouter(prefix="/users", tags=["Users"])
@@ -28,8 +29,21 @@ async def get_auth_code_endpoint(
     ),
     response_model_include=Token,
 )
-async def login_endpoint(users_service: users_service_dep, code: Code):
-    return await users_service.login(code)
+async def login_endpoint(
+    response: Response,
+    users_service: users_service_dep,
+    code: Code,
+):
+    acess_token, refresh_token = await users_service.login(code)
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        samesite="lax",
+        max_age=settings.AUTH_JWT.refresh_token_lifetime * 24 * 3600,
+    )
+
+    return acess_token
 
 
 @users_v1_router.get(
@@ -40,7 +54,7 @@ async def login_endpoint(users_service: users_service_dep, code: Code):
 )
 async def refresh_token_endpoint(
     users_service: users_service_dep,
-    payload: dict = Depends(get_access_payload),
+    payload: dict = Depends(get_refresh_payload),
 ):
     return await users_service.refresh_access_token(payload)
 

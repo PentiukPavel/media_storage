@@ -105,41 +105,36 @@ def get_access_payload(
         return payload
     except ExpiredSignatureError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
         )
     except InvalidTokenError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
         )
 
 
-def get_refresh_payload(
-    token: str = Cookie(None)
-) -> dict:
+def get_refresh_payload(refresh_token: str = Cookie(None)) -> dict:
     """
     Получение данных пользователя из cookie.
     :param token: данные из request
     :return: данные пользователя
     """
 
-    if not token:
+    print(refresh_token)
+    if not refresh_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Access token is missing",
+            detail="Refresh token is missing",
         )
     try:
-        payload = decode_jwt(token)
+        payload = decode_jwt(refresh_token)
         return payload
     except ExpiredSignatureError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
         )
 
     except InvalidTokenError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
         )
