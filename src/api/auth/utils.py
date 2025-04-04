@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
-from fastapi import Depends, status, HTTPException
+from fastapi import Cookie, Depends, status, HTTPException
 from fastapi.security import (
     HTTPBearer,
     HTTPAuthorizationCredentials,
 )
 import jwt
-from jwt.exceptions import InvalidTokenError
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 from core.config import settings
 
@@ -103,8 +103,43 @@ def get_access_payload(
     try:
         payload = decode_jwt(token=token)
         return payload
-    except InvalidTokenError as e:
+    except ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"invalid token error: {e}",
+            detail="Token expired"
+        )
+    except InvalidTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token"
+        )
+
+
+def get_refresh_payload(
+    token: str = Cookie(None)
+) -> dict:
+    """
+    Получение данных пользователя из cookie.
+    :param token: данные из request
+    :return: данные пользователя
+    """
+
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Access token is missing",
+        )
+    try:
+        payload = decode_jwt(token)
+        return payload
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token expired"
+        )
+
+    except InvalidTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token"
         )
