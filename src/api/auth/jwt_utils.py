@@ -11,6 +11,16 @@ def create_jwt(
     delta_minutes: int = settings.AUTH_JWT.access_token_lifetime,
     expire_timedelta: timedelta | None = None,
 ):
+    """
+    Создание JWT токена.
+
+    :param token_type: тип токена
+    :param token_data: данные для кодирования в токене
+    :param delta_minutes: срок действия токена в минутах
+    :param expire_timedelta: срок действия токена - тип timedelta (опционально)
+    :return: JWT токен
+    """
+
     payload = {settings.AUTH_JWT.token_type_field: token_type}
     payload.update(token_data)
     return encode_jwt(
@@ -21,6 +31,13 @@ def create_jwt(
 
 
 def create_access_token(user: User) -> str:
+    """
+    Создание access JWT токена.
+
+    :param user: данные пользователя
+    :return: access JWT токен
+    """
+
     payload = {"email": user.email}
     return create_jwt(
         token_type=settings.AUTH_JWT.access_token_type,
@@ -30,6 +47,13 @@ def create_access_token(user: User) -> str:
 
 
 def create_refresh_token(user: User) -> str:
+    """
+    Создание refresh JWT токена.
+
+    :param user: данные пользователя
+    :return: refresh JWT токен
+    """
+
     payload = {
         "email": user.email,
     }

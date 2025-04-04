@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from api.dependencies import users_service_dep, current_user_dep
-from api.auth.utils import get_payload
+from api.auth.utils import get_access_payload
 from schemes import Code, Token, UserRetrieve
 
 users_v1_router = APIRouter(prefix="/users", tags=["Users"])
@@ -40,7 +40,7 @@ async def login_endpoint(users_service: users_service_dep, code: Code):
 )
 async def refresh_token_endpoint(
     users_service: users_service_dep,
-    payload: dict = Depends(get_payload),
+    payload: dict = Depends(get_access_payload),
 ):
     return await users_service.refresh_access_token(payload)
 

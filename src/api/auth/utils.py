@@ -22,6 +22,17 @@ def encode_jwt(
     delta_minutes: int = settings.AUTH_JWT.access_token_lifetime,
     expire_timedelta: timedelta | None = None,
 ) -> str:
+    """
+    Кодирование JWT токена.
+
+    :param payload: данные токена
+    :param private_key: приватный ключ для кодирования
+    :param algorithm: тип алгоритма кодирования
+    :param delta_minutes: срок действия токена в минутах
+    :param expire_timedelta: срок действия токена - тип timedelta (опционально)
+    :return: JWT токен
+    """
+
     payload_upd = payload.copy()
     now = datetime.now(timezone.utc)
     if expire_timedelta:
@@ -37,12 +48,28 @@ def decode_jwt(
     token: str | bytes,
     public_key: str = settings.AUTH_JWT.public_key_path.read_text(),
     algorithm: str = settings.AUTH_JWT.algorithm,
-):
+) -> dict:
+    """
+    Декодирование JWT токена.
+
+    :param token: JWT токен
+    :param public_key: публичный ключ для кодирования
+    :param algorithm: тип алгоритма кодирования
+    :return: данные зашифрованные в токене
+    """
+
     decoded = jwt.decode(token, public_key, algorithms=[algorithm])
     return decoded
 
 
 def hash_password(password: str) -> str:
+    """
+    Хеширование пароля.
+
+    :param password: пароль в исходном виде
+    :return: хеш пароля
+    """
+
     salt = bcrypt.gensalt()
     pwd_bytes: bytes = password.encode()
     binary_pswd = bcrypt.hashpw(pwd_bytes, salt)
@@ -50,13 +77,28 @@ def hash_password(password: str) -> str:
 
 
 def validate_password(password: str, hashed_password: str) -> bool:
+    """
+    Валидация пароля.
+
+    :param password: пароль в исходном виде
+    :param hashed_password: хеш пароля
+    :return: совпадение
+    """
+
     binary_pswd = hashed_password.encode("ascii")
     return bcrypt.checkpw(password.encode(), binary_pswd)
 
 
-def get_payload(
+def get_access_payload(
     credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
 ) -> dict:
+    """
+    Получение данных пользователя из request.
+
+    :param credentials: данные из request
+    :return: данные пользователя
+    """
+
     token = credentials.credentials
     try:
         payload = decode_jwt(token=token)
