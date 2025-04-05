@@ -19,6 +19,12 @@ class YandexAuth:
         self.redirect_uri = settings.REDIRECT_URI
 
     async def get_auth_code(self) -> str:
+        """
+        Получение url для получения кода авторизации по Yandex ID.
+
+        :return: url для получения кода авторизации по Yandex ID
+        """
+
         base_url = "https://oauth.yandex.ru/authorize"
         params = {
             "response_type": "code",
@@ -29,6 +35,13 @@ class YandexAuth:
         return code_url
 
     async def get_auth_token(self, code: Code) -> str:
+        """
+        Получение токена для получения данных пользователя по Yandex ID.
+
+        :param code: код авторизации
+        :return: токен для получения данных пользователя по Yandex ID
+        """
+
         token_url = "https://oauth.yandex.ru/token"
         code = code.model_dump()["code"]
         data = {
@@ -49,6 +62,13 @@ class YandexAuth:
             return tokens.get("access_token")
 
     async def get_user_info(self, access_token: str) -> dict:
+        """
+        Получение данных пользователя по Yandex ID.
+
+        :param code: токен
+        :return: данные пользователя
+        """
+
         user_info_url = "https://login.yandex.ru/info"
         headers = {"Authorization": f"OAuth {access_token}"}
 
