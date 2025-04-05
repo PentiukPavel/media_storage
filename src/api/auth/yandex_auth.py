@@ -18,7 +18,7 @@ class YandexAuth:
         self.client_secret = settings.CLIENT_SECRET
         self.redirect_uri = settings.REDIRECT_URI
 
-    async def get_auth_code(self) -> str:
+    async def get_auth_url(self) -> str:
         """
         Получение url для получения кода авторизации по Yandex ID.
 
@@ -65,7 +65,7 @@ class YandexAuth:
         """
         Получение данных пользователя по Yandex ID.
 
-        :param code: токен
+        :param access_token: токен
         :return: данные пользователя
         """
 

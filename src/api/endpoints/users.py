@@ -13,10 +13,10 @@ users_v1_router = APIRouter(prefix="/users", tags=["Users"])
     summary="URL для получения кода.",
     description="Получение url для получения кода авторизации.",
 )
-async def get_auth_code_endpoint(
+async def get_auth_url_endpoint(
     users_service: users_service_dep,
 ):
-    return await users_service.get_auth_code()
+    return await users_service.get_auth_url()
 
 
 @users_v1_router.post(
