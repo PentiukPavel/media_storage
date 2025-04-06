@@ -6,10 +6,22 @@ from repositories.base import AbstrsctRepository
 
 
 class UserRepository(AbstrsctRepository):
+    """
+    SQLAlchemy репозитория для взаимодействия с таблицей пользователей.
+    """
+
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def get_or_create(self, email: str) -> User:
+        """
+        Создание нового пользователя или получение сведений \
+        о пользователе из БД, если он уже существует.
+
+        :param email: email пользователя
+        :return: данные пользователя
+        """
+
         query = select(User).where(User.email == email)
         result = await self.session.execute(query)
         user = result.scalar_one_or_none()
@@ -24,7 +36,14 @@ class UserRepository(AbstrsctRepository):
 
         return user
 
-    async def get_user_by_email(self, email: str) -> User:
+    async def get_user_by_email(self, email: str) -> User | None:
+        """
+        Получение сведений о пользователе из БД по email.
+
+        :param email: email пользователя
+        :return: данные пользователя, если он найден
+        """
+
         query = select(User).where(User.email == email)
         result = await self.session.execute(query)
         user = result.scalar_one_or_none()
