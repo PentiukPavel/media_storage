@@ -5,6 +5,7 @@ import aiofiles
 from fastapi import UploadFile
 
 from core.config import settings
+from exceptions import FilenameExists
 from models import User
 from utils.unit_of_work import BaseUnitOfWork
 
@@ -41,23 +42,35 @@ class MediaFilesService:
         :param filename: имя файла
         :param current_user: данные пользователя
         :param file: файл
+
+        :raises FilenameExists: файл с таким именем уже существует
         :return: данные загруженного файла
         """
 
-        ext = file.filename.split(".")[-1]
-        path = os.path.join(
-            settings.STORAGE_LOCATION,
-            f"{filename}.{ext}",
-        )
-        data = {
-            "filename": filename,
-            "owner_id": current_user.id,
-            "file_url": str(path),
-        }
-        async with aiofiles.open(path, "wb") as media_file:
-            content = await file.read()
-            await media_file.write(content)
         async with self.uow:
+            if (
+                await self.uow.media.get_file_by_filename_and_user_id(
+                    filename=filename,
+                    user_id=current_user.id,
+                )
+                is not None
+            ):
+                raise FilenameExists()
+
+            ext = file.filename.split(".")[-1]
+            path = os.path.join(
+                settings.STORAGE_LOCATION,
+                f"{filename}.{ext}",
+            )
+            data = {
+                "filename": filename,
+                "owner_id": current_user.id,
+                "file_url": str(path),
+            }
+            async with aiofiles.open(path, "wb") as media_file:
+                content = await file.read()
+                await media_file.write(content)
+
             media_file = await self.uow.media.create_media_file(data)
             await self.uow.commit()
-        return media_file
+            return media_file

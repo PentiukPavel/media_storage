@@ -40,3 +40,21 @@ class MediaFilesRepository(AbstrsctRepository):
         stmnt = insert(MedeaFile).values(**data).returning(MedeaFile)
         result = await self.session.execute(stmnt)
         return result.scalar_one().to_read_model()
+
+    async def get_file_by_filename_and_user_id(
+        self, filename: str, user_id: int
+    ) -> MedeaFile | None:
+        """
+        Получение из БД файла по имени файла и ID пользователя.
+
+        :param filename: имя файла
+        :param user_id: ID пользователя
+        :return: данные файла при наличии
+        """
+
+        query = select(MedeaFile).filter_by(
+            owner_id=user_id,
+            filename=filename,
+        )
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()

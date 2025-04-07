@@ -54,9 +54,7 @@ def create_refresh_token(user: User) -> str:
     :return: refresh JWT токен
     """
 
-    payload = {
-        "email": user.email,
-    }
+    payload = {"email": user.email}
     return create_jwt(
         token_type=settings.AUTH_JWT.refresh_token_type,
         token_data=payload,

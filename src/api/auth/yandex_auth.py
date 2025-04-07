@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from fastapi import HTTPException, status
 
 from core.config import settings
-from core.choices import APIMessages
+from core.choices import APIExceptions
 from schemes import Code
 
 
@@ -56,7 +56,7 @@ class YandexAuth:
             if response.status_code == status.HTTP_400_BAD_REQUEST:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=APIMessages.CAN_NOT_GET_AUTH_TOKEN.value,
+                    detail=APIExceptions.CAN_NOT_GET_AUTH_TOKEN.value,
                 )
             tokens = response.json()
             return tokens.get("access_token")
@@ -77,6 +77,6 @@ class YandexAuth:
             if response.status_code != 200:
                 raise HTTPException(
                     status_code=400,
-                    detail=APIMessages.CAN_NOT_GET_USER_INFO.value,
+                    detail=APIExceptions.CAN_NOT_GET_USER_INFO.value,
                 )
             return response.json()
