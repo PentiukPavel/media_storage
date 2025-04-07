@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import MedeaFile
+from models import MediaFile
 from repositories.base import AbstrsctRepository
 from schemes import MediaFileRetrieve
 
@@ -24,7 +24,7 @@ class MediaFilesRepository(AbstrsctRepository):
         :return: список файлов пользователя
         """
 
-        query = select(MedeaFile).filter_by(owner_id=user_id)
+        query = select(MediaFile).filter_by(owner_id=user_id)
         result = await self.session.execute(query)
         files = [row[0].to_read_model() for row in result]
         return files
@@ -37,13 +37,13 @@ class MediaFilesRepository(AbstrsctRepository):
         :return: сведения о сохраненном файле
         """
 
-        stmnt = insert(MedeaFile).values(**data).returning(MedeaFile)
+        stmnt = insert(MediaFile).values(**data).returning(MediaFile)
         result = await self.session.execute(stmnt)
         return result.scalar_one().to_read_model()
 
     async def get_file_by_filename_and_user_id(
         self, filename: str, user_id: int
-    ) -> MedeaFile | None:
+    ) -> MediaFile | None:
         """
         Получение из БД файла по имени файла и ID пользователя.
 
@@ -52,7 +52,7 @@ class MediaFilesRepository(AbstrsctRepository):
         :return: данные файла при наличии
         """
 
-        query = select(MedeaFile).filter_by(
+        query = select(MediaFile).filter_by(
             owner_id=user_id,
             filename=filename,
         )

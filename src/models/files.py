@@ -3,12 +3,16 @@ from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy_utils import URLType
 
 from core.database import Base, CommonMixin
+from core.limits import Limit
 from schemes import MediaFileRetrieve
 
 
-class MedeaFile(CommonMixin, Base):
+class MediaFile(CommonMixin, Base):
 
-    filename: Mapped[String] = Column(String(length=100), nullable=False)
+    filename: Mapped[String] = Column(
+        String(length=Limit.MAX_LENGTH_FILENAME.value),
+        nullable=False,
+    )
     file_url: Mapped[str] = Column(URLType, nullable=False)
     owner_id: Mapped[int] = Column(
         Integer, ForeignKey("user.id"), nullable=False

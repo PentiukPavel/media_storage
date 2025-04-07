@@ -5,7 +5,8 @@ import aiofiles
 from fastapi import UploadFile
 
 from core.config import settings
-from exceptions import FilenameExists
+from core.limits import Limit
+from exceptions import FilenameExists, WrongFilename
 from models import User
 from utils.unit_of_work import BaseUnitOfWork
 
@@ -42,10 +43,13 @@ class MediaFilesService:
         :param filename: имя файла
         :param current_user: данные пользователя
         :param file: файл
-
         :raises FilenameExists: файл с таким именем уже существует
+        :raises WrongFilename: слишком длинное имя файла
         :return: данные загруженного файла
         """
+
+        if len(filename) > Limit.MAX_LENGTH_FILENAME.value:
+            raise WrongFilename()
 
         async with self.uow:
             if (

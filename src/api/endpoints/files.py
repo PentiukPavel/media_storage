@@ -3,7 +3,7 @@ from typing import Annotated, List
 from fastapi import APIRouter, File, HTTPException, status, UploadFile
 
 from api.dependencies import current_user_dep, media_service_dep
-from exceptions import FilenameExists
+from exceptions import FilenameExists, WrongFilename
 from schemes import MediaFileRetrieve
 
 media_v1_router = APIRouter(prefix="/media", tags=["Media"])
@@ -39,8 +39,7 @@ async def create_media_file_endpoint(
             current_user=current_user,
             file=file,
         )
-    except FilenameExists as e:
+    except (FilenameExists, WrongFilename) as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
         )
