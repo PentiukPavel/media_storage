@@ -14,7 +14,7 @@ class User(CommonMixin, Base):
     )
 
     media_files = relationship(
-        "MedeaFile", back_populates="owner", uselist=True
+        "MediaFile", back_populates="owner", uselist=True
     )
 
     def to_read_model(self) -> UserRetrieve:

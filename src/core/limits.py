@@ -7,3 +7,4 @@ class Limit(IntEnum):
     """
 
     MAX_LENGTH_FILENAME = 100
+    MAX_FILE_SIZE_MB = 2 * 1024 * 1024

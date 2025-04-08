@@ -6,7 +6,12 @@ from fastapi import UploadFile
 
 from core.config import settings
 from core.limits import Limit
-from exceptions import FilenameExists, WrongFilename
+from exceptions import (
+    FileIsTooLarge,
+    FilenameExists,
+    WrongFilename,
+    WrongFileType,
+)
 from models import User
 from utils.unit_of_work import BaseUnitOfWork
 
@@ -47,6 +52,15 @@ class MediaFilesService:
         :raises WrongFilename: слишком длинное имя файла
         :return: данные загруженного файла
         """
+
+        file_size = file.file.tell()
+
+        if file_size > Limit.MAX_FILE_SIZE_MB.value:
+            raise FileIsTooLarge()
+
+        content_type = file.content_type
+        if content_type not in settings.FILE_TYPES:
+            raise WrongFileType()
 
         if len(filename) > Limit.MAX_LENGTH_FILENAME.value:
             raise WrongFilename()

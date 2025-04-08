@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     # App config
     ERROR_LOG_FILENAME: str
     STORAGE_LOCATION: Path = Path(BASE_DIR, "media")
+    FILE_TYPES: list = ["image/jpeg", "image/png", "image/gif"]
 
     # Data Base config
     POSTGRES_HOST: str

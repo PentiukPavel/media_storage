@@ -1,5 +1,6 @@
 from enum import StrEnum
 
+from core.config import settings
 from core.limits import Limit
 
 
@@ -12,4 +13,10 @@ class APIExceptions(StrEnum):
     WRONG_FILENAME = (
         "Длинна имени файла не должна превышать"
         f" {Limit.MAX_LENGTH_FILENAME.value}."
+    )
+    FILE_IS_TOO_LARGE = (
+        "Размер файла должен быть менше" f" {Limit.MAX_FILE_SIZE_MB.value}."
+    )
+    WRONG_FILE_TYPE = (
+        f"Тип сохраняемого файла должен быть {', '.join(settings.FILE_TYPES)}"
     )
